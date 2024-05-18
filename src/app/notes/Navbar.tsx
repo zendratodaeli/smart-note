@@ -42,12 +42,7 @@ const Navbar = () => {
               Add Note
             </Button>
             <AIChatButton/>
-            <SignedOut>
-              <SignInButton />
-            </SignedOut>
-              <SignedIn>
-                <UserButton afterSignOutUrl="/" />
-            </SignedIn>
+            <UserButton afterSignOutUrl='/'/>
           </div>
         </div>
       </div>
