@@ -35,7 +35,7 @@ const Navbar = () => {
             />
             <span className=" font-bold">FO - AI</span>
           </Link>
-          <div className=" flex items-center gap-2">
+          <div className=" flex items-center gap-3">
             <ThemeToggle/>
             <Button onClick={() => setShowAddEditNoteDialog(true)}>
               <Plus size={20} className="mr-2"/>
