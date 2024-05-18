@@ -24,7 +24,7 @@ const Navbar = () => {
 
   return (
     <>
-      <div className=" p-4 shadow">
+      <div className=" p-4 shadow dark:border">
         <div className=" max-w-7xl m-auto flex flex-wrap gap-3 items-center justify-between">
           <Link href="/" className="flex items-center gap-1">
             <Image

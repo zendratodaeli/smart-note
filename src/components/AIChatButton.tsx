@@ -11,8 +11,8 @@ const AIChatButton = () => {
   return (
     <>
       <Button onClick={() => setChatBoxOpen(true)}>
-        <Bot size={24}/>
-        Ai Chat button
+        <Bot size={24} className=" mr-2"/>
+        Smart Chat
       </Button>
       <AIChatBox open={chatBoxOpen} onClose={() => setChatBoxOpen(false)}/>
     </>
