@@ -15,7 +15,7 @@ export async function POST(req: Request) {
     }
     
     const {title, content} = parseResult.data;
-
+    
     const {userId} = auth();
 
     if(!userId) {
