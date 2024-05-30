@@ -9,6 +9,7 @@ export async function POST(req: Request) {
     const body = await req.json();
     const parseResult = createNoteSchema.safeParse(body);
     
+    
     if(!parseResult.success) {
       console.error(parseResult.error);
       return Response.json({error: "Invalid input"}, {status: 400})
