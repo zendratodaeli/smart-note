@@ -14,7 +14,9 @@ const Navbar = () => {
   const [showAddEditNoteDialog, setShowAddEditNoteDialog] = useState(false);
   const [mounted, setMounted] = useState(false);
   const { organization } = useOrganization();
-  console.log(organization?.id)
+  console.log("organization", organization?.membersCount)
+
+
   useEffect(() => {
     setMounted(true)
   }, []);
@@ -43,7 +45,7 @@ const Navbar = () => {
               Add Note
             </Button>
             <AIChatButton/>
-            <OrganizationSwitcher/>
+            {/* <OrganizationSwitcher/> */}
             <UserButton afterSignOutUrl='/'/>
           </div>
         </div>

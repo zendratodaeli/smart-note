@@ -9,7 +9,9 @@ import { Textarea } from "./ui/textarea"
 import LoadingButton from "./ui/loading-button"
 import { useRouter } from "next/navigation"
 import { Note } from "@prisma/client"
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import { useOrganization } from "@clerk/nextjs"
+import { auth } from "@clerk/nextjs/server"
 
 interface AddEditNoteDialogProps {
   open: boolean,
@@ -20,74 +22,81 @@ interface AddEditNoteDialogProps {
 const AddEditNoteDialog = ({open, setOpen, noteToEdit}: AddEditNoteDialogProps) => {
   const [deleteInProgress, setDeleteInProgress] = useState(false);
   const router = useRouter();
+  
+  const { organization } = useOrganization();
+  console.log("organization", organization?.membersCount)
 
   const form = useForm<CreateNoteSchema>({
     resolver: zodResolver(createNoteSchema),
     defaultValues: {
       title: noteToEdit?.title || "",
-      content: noteToEdit?.content || ""
+      content: noteToEdit?.content || "",
+      organizationId: organization?.id || "",
     }
-  })
+  });
+
+  useEffect(() => {
+    form.setValue('organizationId', organization?.id || "");
+  }, [organization?.id, form]);
 
   async function onSubmit(input: CreateNoteSchema) {
-    // alert(JSON.stringify(input));
     try {
-      if(noteToEdit) {
+      if (noteToEdit) {
         const response = await fetch("/api/notes", {
           method: "PUT",
           body: JSON.stringify({
             id: noteToEdit.id,
             ...input
           })
-        })
+        });
 
-        if(!response.ok) {
-          throw Error("Status Code: " + response.status)
-        };
+        if (!response.ok) {
+          throw Error("Status Code: " + response.status);
+        }
       } else {
         const response = await fetch("/api/notes", {
           method: "POST",
           body: JSON.stringify(input)
         });
-  
-        if(!response.ok) {
-          throw Error("Status Code: " + response.status)
-        };
-  
+
+        if (!response.ok) {
+          throw Error("Status Code: " + response.status);
+        }
+
         form.reset();
       }
 
       router.refresh();
       setOpen(false);
-      
+
     } catch (error) {
       console.error(error);
-      alert("Something went wrong, please try again!")
+      alert("Something went wrong, please try again!");
     }
-  };
+  }
 
-  async function deleteNote () {
-    if(!noteToEdit) return;
-    setDeleteInProgress(true)
+  async function deleteNote() {
+    if (!noteToEdit) return;
+    setDeleteInProgress(true);
     try {
       const response = await fetch("api/notes", {
         method: "DELETE",
         body: JSON.stringify({
           id: noteToEdit.id
         })
-      })
+      });
 
-      if(!response.ok) {
-        throw Error("Status Code: " + response.status)
-      };
+      if (!response.ok) {
+        throw Error("Status Code: " + response.status);
+      }
 
       router.refresh();
       setOpen(false);
     } catch (error) {
       console.error(error);
-      alert("Something went wrong, please try again!")
+      alert("Something went wrong, please try again!");
     } finally {
-      setDeleteInProgress(false)
+      setDeleteInProgress(false);
     }
   }
 
@@ -130,7 +139,18 @@ const AddEditNoteDialog = ({open, setOpen, noteToEdit}: AddEditNoteDialogProps) 
                 </FormItem>
               )}
             />
-            <DialogFooter className=" gap-2  sm:gap-0">
+            <FormField
+              control={form.control}
+              name="organizationId"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <Input type="hidden" {...field} />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+            <DialogFooter className="gap-2 sm:gap-0">
               {noteToEdit && (
                 <LoadingButton
                   variant="destructive"
@@ -154,7 +174,7 @@ const AddEditNoteDialog = ({open, setOpen, noteToEdit}: AddEditNoteDialogProps) 
         </Form>
       </DialogContent>
     </Dialog>
-  )
+  );
 }
 
-export default AddEditNoteDialog
+export default AddEditNoteDialog;

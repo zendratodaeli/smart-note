@@ -3,6 +3,7 @@ import { getEmbedding } from "@/lib/openai";
 import { createNoteSchema, deleteNoteSchema, updatedNoteSchema } from "@/lib/validation/note";
 import { auth } from "@clerk/nextjs/server";
 import prisma from '@/lib/db/prisma';
+import { useOrganization } from "@clerk/nextjs";
 
 export async function POST(req: Request) {
   try {
@@ -15,7 +16,7 @@ export async function POST(req: Request) {
       return Response.json({error: "Invalid input"}, {status: 400})
     }
     
-    const {title, content} = parseResult.data;
+    const {title, content, organizationId, memberId} = parseResult.data;
     
     const {userId} = auth();
 
@@ -28,7 +29,7 @@ export async function POST(req: Request) {
     const note = await prisma.$transaction(async (tx) => {
       const note = await tx.note.create({
         data: {
-          title, content, userId
+          title, content, userId, organizationId, memberId
         }
       });
 
